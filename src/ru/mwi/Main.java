@@ -56,16 +56,17 @@ public class Main {
         String Name = reader.nextLine();
         // remove spaces
         Name = Name.replaceAll("\\s", "");
-        // get numbers
+        // get arab numbers
         Pattern pattern = Pattern.compile("\\d+");
         Matcher matcher = pattern.matcher(Name);
-        // fill array nums
+        // fill array with arab nums
         while (matcher.find()) {
             nums = pushD(nums, Double.parseDouble(matcher.group()));
         }
+        // get roman numbers
         pattern = Pattern.compile("[IVXLCDM]+");
         matcher = pattern.matcher(Name);
-        // fill array nums
+        // fill array with roman nums
         while (matcher.find()) {
             nums = pushD(nums, convertRoman(matcher.group()));
         }
