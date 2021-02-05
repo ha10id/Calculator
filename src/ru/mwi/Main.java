@@ -30,6 +30,7 @@ public class Main {
                     .collect(Collectors.toList());
         }
     }
+
     public static String arabicToRoman(double number) {
 
         List<RomanNumeral> romanNumerals = RomanNumeral.getReverseSortedValues();
@@ -49,6 +50,7 @@ public class Main {
 
         return sb.toString();
     }
+
     public static int convertRoman(String roman_numeral) {
         Map<Character, Integer> roman_char_dict = new HashMap<Character, Integer>();
         roman_char_dict.put('I', 1);
@@ -67,6 +69,7 @@ public class Main {
         }
         return res;
     }
+
     // emulate push for string array
     private static String[] pushS(String[] array, String push) {
         String[] longer = new String[array.length + 1];
@@ -103,8 +106,7 @@ public class Main {
         while (matcher.find()) {
             int num = Integer.parseInt(matcher.group());
             if (num > 10 || num < 1) {
-                System.out.println("Ошибка при вводе арабских чисел");
-                System.exit(255);
+                throw new IllegalArgumentException(num + " Ошибка при вводе арабских чисел");
             }
             nums = pushD(nums, num);
             isArab = true;
@@ -116,39 +118,39 @@ public class Main {
         while (matcher.find()) {
             int num = convertRoman(matcher.group());
             if (num > 10 || num < 1 || isArab) {
-                System.out.println("Ошибка при вводе римских чисел");
-                System.exit(255);
+                throw new IllegalArgumentException(num + " Ошибка при вводе римских чисел");
             }
             nums = pushD(nums, num);
             isRoman = true;
         }
         if (isArab && isRoman) {
-            System.out.println("Ошибка смешивания арабских и римских чисел");
-            System.exit(255);
+            throw new IllegalArgumentException("Ошибка смешивания арабских и римских чисел");
         }
         // exit if error in numbers
         if (nums.length < 2) {
-            System.out.println("Ошибка при вводе чисел");
-            System.exit(255);
+            throw new IllegalArgumentException("Ошибка при вводе чисел");
         }
 
         // get operators
         String[] s3 = Name.split("\\w+");
-        for (int a = 0; a < s3.length; a++) {
+        for (
+                int a = 0;
+                a < s3.length; a++) {
             if (s3[a] != "" && s3[a].length() == 1) {
                 ops = pushS(ops, s3[a]);
             }
         }
         // exit if error in operators
         if (ops.length < 1 || ops.length != (nums.length - 1)) {
-            System.out.println("Ошибка! при вводе арифметического оператора");
-            System.exit(255);
+            throw new IllegalArgumentException("Ошибка при вводе арифметического оператора");
         }
 
 //        System.out.println(Arrays.deepToString(ops));
 
         // calculate answer
-        for (int j = 0; j < ops.length; j++) {
+        for (
+                int j = 0;
+                j < ops.length; j++) {
             if (j == 0) {
                 ans = nums[j];
             }
@@ -166,8 +168,7 @@ public class Main {
                     ans = ans / nums[j + 1];
                     break;
                 default:
-                    System.out.printf("Ошибка! Введите правильный оператор");
-                    return;
+                    throw new IllegalArgumentException("Ошибка! Введите правильный оператор");
             }
         }
         if (isArab) {
