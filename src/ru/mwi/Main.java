@@ -49,6 +49,9 @@ public class Main {
         double[] nums = {};
         String[] ops = {};
         double ans = 0;
+        boolean isArab = false;
+        boolean isRoman = false;
+
         Scanner reader = new Scanner(System.in);
         System.out.print("Введите данные, например: 1+2 или I+V-X. ps: формула может быть бесконечна ;-): ");
 
@@ -60,14 +63,30 @@ public class Main {
         Matcher matcher = pattern.matcher(Name);
         // fill array with arab nums
         while (matcher.find()) {
-            nums = pushD(nums, Double.parseDouble(matcher.group()));
+            double num = Double.parseDouble(matcher.group());
+            if (num > 10 || num < 1) {
+                System.out.println("Ошибка при вводе арабских чисел");
+                System.exit(255);
+            }
+            nums = pushD(nums, num);
+            isArab = true;
         }
         // get roman numbers
         pattern = Pattern.compile("[IVXLCDM]+");
         matcher = pattern.matcher(Name);
         // fill array with roman nums
         while (matcher.find()) {
-            nums = pushD(nums, convertRoman(matcher.group()));
+            double num = convertRoman(matcher.group());
+            if (num > 10 || num < 1 || isArab) {
+                System.out.println("Ошибка при вводе римских чисел");
+                System.exit(255);
+            }
+            nums = pushD(nums, num);
+            isRoman = true;
+        }
+        if (isArab && isRoman) {
+            System.out.println("Ошибка смешивания арабских и римских чисел");
+            System.exit(255);
         }
         // exit if error in numbers
         if (nums.length < 2) {
