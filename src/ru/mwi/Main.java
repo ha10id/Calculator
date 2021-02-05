@@ -2,15 +2,54 @@ package ru.mwi;
 
 //import java.util.Arrays;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class Main {
-    public static double convertRoman(String roman_numeral) {
+    enum RomanNumeral {
+        I(1), IV(4), V(5), IX(9), X(10),
+        XL(40), L(50), XC(90), C(100),
+        CD(400), D(500), CM(900), M(1000);
+
+        private int value;
+
+        RomanNumeral(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static List<RomanNumeral> getReverseSortedValues() {
+            return Arrays.stream(values())
+                    .sorted(Comparator.comparing((RomanNumeral e) -> e.value).reversed())
+                    .collect(Collectors.toList());
+        }
+    }
+    public static String arabicToRoman(double number) {
+
+        List<RomanNumeral> romanNumerals = RomanNumeral.getReverseSortedValues();
+
+        int i = 0;
+        StringBuilder sb = new StringBuilder();
+
+        while ((number > 0) && (i < romanNumerals.size())) {
+            RomanNumeral currentSymbol = romanNumerals.get(i);
+            if (currentSymbol.getValue() <= number) {
+                sb.append(currentSymbol.name());
+                number -= currentSymbol.getValue();
+            } else {
+                i++;
+            }
+        }
+
+        return sb.toString();
+    }
+    public static int convertRoman(String roman_numeral) {
         Map<Character, Integer> roman_char_dict = new HashMap<Character, Integer>();
         roman_char_dict.put('I', 1);
         roman_char_dict.put('V', 5);
@@ -26,8 +65,7 @@ public class Main {
             else
                 res += roman_char_dict.get(roman_numeral.charAt(i)) - 2 * roman_char_dict.get(roman_numeral.charAt(i - 1));
         }
-        double dres = res;
-        return dres;
+        return res;
     }
     // emulate push for string array
     private static String[] pushS(String[] array, String push) {
@@ -38,17 +76,17 @@ public class Main {
     }
 
     // emulate push for double array
-    private static double[] pushD(double[] array, double push) {
-        double[] longer = new double[array.length + 1];
+    private static int[] pushD(int[] array, int push) {
+        int[] longer = new int[array.length + 1];
         System.arraycopy(array, 0, longer, 0, array.length);
         longer[array.length] = push;
         return longer;
     }
 
     public static void main(String[] args) {
-        double[] nums = {};
+        int[] nums = {};
         String[] ops = {};
-        double ans = 0;
+        int ans = 0;
         boolean isArab = false;
         boolean isRoman = false;
 
@@ -63,7 +101,7 @@ public class Main {
         Matcher matcher = pattern.matcher(Name);
         // fill array with arab nums
         while (matcher.find()) {
-            double num = Double.parseDouble(matcher.group());
+            int num = Integer.parseInt(matcher.group());
             if (num > 10 || num < 1) {
                 System.out.println("Ошибка при вводе арабских чисел");
                 System.exit(255);
@@ -76,7 +114,7 @@ public class Main {
         matcher = pattern.matcher(Name);
         // fill array with roman nums
         while (matcher.find()) {
-            double num = convertRoman(matcher.group());
+            int num = convertRoman(matcher.group());
             if (num > 10 || num < 1 || isArab) {
                 System.out.println("Ошибка при вводе римских чисел");
                 System.exit(255);
@@ -132,6 +170,12 @@ public class Main {
                     return;
             }
         }
-        System.out.printf("\nРезультат: %s\n", ans);
+        if (isArab) {
+            System.out.printf("\nРезультат: %s\n", ans);
+        } else {
+            String res = arabicToRoman(ans);
+            System.out.printf("\nРезультат: %s\n", res);
+
+        }
     }
 }
